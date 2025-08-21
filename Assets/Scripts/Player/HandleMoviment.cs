@@ -31,5 +31,14 @@ public class HandleMoviment : NetworkBehaviour
         moveDirection.Normalize(); // Normalize the direction vector to ensure consistent speed
 
         m_characterController.Move(moveDirection * Time.deltaTime * m_speed); // Adjust speed as needed
+        handleGravity(); // Handle gravity application
+    }
+    void handleGravity()
+    {
+        if (m_characterController.isGrounded)
+        {
+            float gravity = 9.81f; // Gravity value
+            m_characterController.Move(Vector3.down * Time.deltaTime * gravity); // Apply gravity when grounded
+        }
     }
 }
