@@ -35,7 +35,7 @@ public class HandleMoviment : NetworkBehaviour
     }
     void handleGravity()
     {
-        if (m_characterController.isGrounded)
+        if (!m_characterController.isGrounded)
         {
             float gravity = 9.81f; // Gravity value
             m_characterController.Move(Vector3.down * Time.deltaTime * gravity); // Apply gravity when grounded
