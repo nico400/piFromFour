@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class HandleCamera : NetworkBehaviour
 {
     [SerializeField] private HandleInputs m_handleInputs;
+    [SerializeField] private Transform m_playerHead;
 
     [Header("config Camera")]
     [SerializeField] private float m_sencityvityX = 25f;
@@ -44,5 +45,6 @@ public class HandleCamera : NetworkBehaviour
         pitch = Mathf.Clamp(pitch, minY, maxY);
 
         transform.rotation = Quaternion.Euler(pitch, rotationX, 0);
+        transform.position = m_playerHead.position;
     }
 }

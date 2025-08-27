@@ -10,6 +10,10 @@ public class handlerAnimation : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         Vector3 moveInput = m_handleInputs.MoveInput;
+
+        animator.SetBool("crouch", m_handleInputs.Crouch);
+        animator.SetBool("run", m_handleInputs.Sprint && moveInput.magnitude > 0);
+
         animator.SetFloat("moveX", moveInput.x);
         animator.SetFloat("moveZ", moveInput.y);
     }
