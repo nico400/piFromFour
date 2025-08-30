@@ -10,6 +10,7 @@ public class StateManagerEnemy : NetworkBehaviour
     //states of the enemy
     public idleState idle = new idleState();
     public patrolState patrol = new patrolState();
+    public chaseState chase = new chaseState();
 
     private void Awake()
     {

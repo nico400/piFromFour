@@ -11,6 +11,9 @@ public class patrolState : NetworkBehaviour, States
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        SeachPlayer._onPlayerDetected += () => {
+            StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.chase);
+        };
     }
 
     public void enterState()
@@ -39,6 +42,6 @@ public class patrolState : NetworkBehaviour, States
         if (agent.remainingDistance < distanceToPoint)
         {
             StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.idle);
-        }
+        }   
     }
 }

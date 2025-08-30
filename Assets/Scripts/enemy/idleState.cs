@@ -14,6 +14,10 @@ public class idleState : NetworkBehaviour, States
     {
         Debug.Log("Entering Idle State");
         timer = 0f;
+
+        SeachPlayer._onPlayerDetected += () => {
+            StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.chase);
+        };
     }
 
     public void exitState()
