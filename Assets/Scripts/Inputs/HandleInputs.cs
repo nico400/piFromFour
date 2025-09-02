@@ -56,6 +56,6 @@ public class HandleInputs : MonoBehaviour
         m_cameraInput = inputMappnig.Player.Look.ReadValue<Vector2>();
         m_Interaction = inputMappnig.Player.Interact.WasPressedThisFrame();
         m_sprint = inputMappnig.Player.Sprint.IsPressed();
-        //m_crouch = inputMappnig.Player.Crouch.IsPressed();
+        m_crouch = inputMappnig.Player.Crouch.IsPressed();
     }
 }

@@ -46,7 +46,6 @@ public class SeachPlayer : MonoBehaviour
                 // get the player transform
                 collider.TryGetComponent(out Transform player);
                 playerTransform = player;
-
                 // get distance and direction to the player
                 float distance = Vector3.Distance(transform.position, playerTransform.position);
                 Vector3 vecToWorld = (playerTransform.position - transform.position).normalized;
@@ -55,8 +54,10 @@ public class SeachPlayer : MonoBehaviour
                 // check if the player is in range
                 if (distance < rangeSphere)
                 {
+                    float maxValue = transform.position.y + heightView;
+                    float minValue = transform.position.y;
                     // check if the player is in height view
-                    if (player.position.y >= transform.position.y && player.position.y < heightView)
+                    if (playerTransform.position.y - 0.15f >= minValue || playerTransform.position.y < maxValue)
                     {
                         // check if the player is in front of the enemy
                         if (vecToTarget.z > angleView)
@@ -98,7 +99,7 @@ public class SeachPlayer : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Handles.DrawWireDisc(transform.position, Vector3.up, rangeSphere);
+        Handles.DrawWireDisc(transform.position  + Vector3.up * - 0.15f, Vector3.up, rangeSphere);
         Handles.DrawWireDisc(transform.position + Vector3.up * heightView, Vector3.up, rangeSphere);
 
         float p = angleView; // percent of the angleView (distance from vector foward)
