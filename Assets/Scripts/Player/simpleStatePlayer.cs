@@ -1,6 +1,7 @@
+using Mirror;
 using UnityEngine;
 
-public class simpleStatePlayer : MonoBehaviour
+public class simpleStatePlayer : NetworkBehaviour
 {
     [SerializeField] private HandleInputs m_handleInputs;   
 
@@ -23,14 +24,17 @@ public class simpleStatePlayer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (!isLocalPlayer) { return; }
+
         m_handleInputs = GetComponent<HandleInputs>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        handleStates();
+        if (!isLocalPlayer) { return; }
 
+        handleStates();
     }
     public void handleStates()
     {
