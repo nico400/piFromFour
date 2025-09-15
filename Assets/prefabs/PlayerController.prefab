@@ -450,6 +450,7 @@ GameObject:
   - component: {fileID: 5045277495497724015}
   - component: {fileID: 5481330034552012309}
   - component: {fileID: 7425370062135134328}
+  - component: {fileID: 7074428881347323962}
   - component: {fileID: 2764790706352803296}
   - component: {fileID: 6168318477635544047}
   m_Layer: 7
@@ -692,6 +693,26 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   rig: {fileID: 4295428704995587152}
+--- !u!114 &7074428881347323962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9167282065142885666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96fd12677d32e4340ae857696ee7eb12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  animator: {fileID: 8420182471444632609}
+  layerIndex: 2
+  pickUpOn: 0.8
+  pickUpOff: 0
+  isPickUp: 0
 --- !u!95 &2764790706352803296
 Animator:
   serializedVersion: 7

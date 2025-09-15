@@ -7,12 +7,19 @@ public class CallInteractivedObj : NetworkBehaviour
     [SerializeField] private Transform camTransform;
     [SerializeField] private LayerMask layerInteractables;
     [SerializeField] private float interactionDistance = 3f;
-
     [SerializeField] private GameObject m_handThatInteractPosition;
+    [SerializeField] private ObjectInteractable objThatInteract;
     public GameObject handThatInteractPosition
     {
         get => m_handThatInteractPosition;
         private set => m_handThatInteractPosition = value;
+    }
+
+    [SyncVar] [SerializeField] private bool m_isHold = false;
+    public bool IsHold 
+    { 
+        get => m_isHold; 
+        set => m_isHold = value; 
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,7 +33,6 @@ public class CallInteractivedObj : NetworkBehaviour
     {
         if(!isLocalPlayer) { return; }
 
-        Debug.DrawRay(camTransform.position, camTransform.forward * interactionDistance, Color.red); // Visualize the raycast in the scene view
         RaycastHit hit;
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, interactionDistance, layerInteractables))
         {
@@ -34,13 +40,21 @@ public class CallInteractivedObj : NetworkBehaviour
             IInteraction interactable = hit.collider.GetComponent<IInteraction>();
             if (interactable != null)
             {
-                // hand up when looking at an interactable object
-
-
                 // Call the interactived method on the interactable object
                 if (m_handleInputs.Interaction)
+                {
+                    objThatInteract = hit.collider.GetComponent<ObjectInteractable>();
                     interactable.interactived(this.netIdentity);
+                }                  
             }
-        }      
+        }    
+        if (m_isHold)
+        {
+            if (m_handleInputs.DropItem)
+            {
+                objThatInteract.DropObj(this.netIdentity);
+            }
+        }
     }
+    public void setHoldParam(bool inHold) => m_isHold = inHold;
 }

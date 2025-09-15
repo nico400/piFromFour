@@ -7,6 +7,7 @@ public class HandleInputs : MonoBehaviour
     private Vector2 m_moveInput;
     private Vector2 m_cameraInput;
     private bool m_Interaction;
+    private bool m_DropItem;
     private bool m_sprint;
     private bool m_crouch;
 
@@ -24,6 +25,11 @@ public class HandleInputs : MonoBehaviour
     {
         get => m_Interaction;
         set => m_Interaction = value;
+    }
+    public bool DropItem
+    {
+        get => m_DropItem;
+        set => m_DropItem = value;
     }
     public bool Sprint
     {
@@ -55,6 +61,7 @@ public class HandleInputs : MonoBehaviour
         m_moveInput = inputMappnig.Player.Move.ReadValue<Vector2>();
         m_cameraInput = inputMappnig.Player.Look.ReadValue<Vector2>();
         m_Interaction = inputMappnig.Player.Interact.WasPressedThisFrame();
+        m_DropItem = inputMappnig.Player.Drop.WasPressedThisFrame();
         m_sprint = inputMappnig.Player.Sprint.IsPressed();
         m_crouch = inputMappnig.Player.Crouch.IsPressed();
     }
