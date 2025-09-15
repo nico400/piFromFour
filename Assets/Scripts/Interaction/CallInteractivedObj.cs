@@ -55,6 +55,13 @@ public class CallInteractivedObj : NetworkBehaviour
                 objThatInteract.DropObj(this.netIdentity);
             }
         }
+        if (m_isHold)
+        {
+            if (m_handleInputs.Interaction)
+            {
+                objThatInteract.HoldObj(this.netIdentity);
+            }
+        }
     }
     public void setHoldParam(bool inHold) => m_isHold = inHold;
 }

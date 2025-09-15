@@ -7,6 +7,8 @@ using static Mirror.BouncyCastle.Asn1.Cmp.Challenge;
 [RequireComponent(typeof(NetworkIdentity), typeof(NetworkTransformReliable))]
 public class ObjectInteractable : NetworkBehaviour, IInteraction
 {
+    private bool m_permissionThatHoldThisObject = true;
+
     public UnityEvent ActionWhenStartHold;
     public UnityEvent ActionWhenHold;
     public UnityEvent ActionWhenDrop;
@@ -14,11 +16,24 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
     [Command(requiresAuthority = false)]
     public void interactived(NetworkIdentity callerHand)
     {
+        if (!m_permissionThatHoldThisObject) return;
+
         var hand = callerHand.GetComponent<CallInteractivedObj>();
         if (!hand.IsHold)
         {
+            m_permissionThatHoldThisObject = false;
             RpcPickupObj(callerHand.gameObject);
             hand.setHoldParam(true);
+        }
+    }
+    [Command(requiresAuthority = false)]
+    public void HoldObj(NetworkIdentity callerHand)
+    {
+        var hand = callerHand.GetComponent<CallInteractivedObj>();
+        if (hand.IsHold)
+        {
+            print("aaaaaaaaa");
+            RpcPickupHold(callerHand.gameObject);
         }
     }
     [Command(requiresAuthority = false)]
@@ -27,6 +42,7 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         var hand = callerHand.GetComponent<CallInteractivedObj>();
         if (hand.IsHold)
         {
+            m_permissionThatHoldThisObject = true;
             RpcPickupObjDrop(callerHand.gameObject);
             hand.setHoldParam(false);
         }
@@ -45,6 +61,11 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Rigidbody>().useGravity = false;
         ActionWhenStartHold.Invoke();
+    }
+    [ClientRpc]
+    void RpcPickupHold(GameObject hand)
+    {
+        ActionWhenHold.Invoke();
     }
     [ClientRpc]
     void RpcPickupObjDrop(GameObject hand)
