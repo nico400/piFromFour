@@ -99,8 +99,11 @@ public class SeachPlayer : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        #if UNITY_EDITOR
+
         Handles.DrawWireDisc(transform.position  + Vector3.up * - 0.15f, Vector3.up, rangeSphere);
         Handles.DrawWireDisc(transform.position + Vector3.up * heightView, Vector3.up, rangeSphere);
+
 
         float p = angleView; // percent of the angleView (distance from vector foward)
         float x = Mathf.Sqrt(1 - p * p); // percent of the angleView
@@ -120,5 +123,7 @@ public class SeachPlayer : MonoBehaviour
         // draw last position player lose
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(lastPositionPlayerLose, .55f);
+
+        #endif
     }
 }
