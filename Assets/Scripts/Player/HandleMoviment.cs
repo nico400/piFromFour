@@ -6,7 +6,7 @@ public class HandleMoviment : NetworkBehaviour
     [SerializeField] private HandleInputs m_handleInputs;
     [SerializeField] private Transform m_cameraTransform;
     [SerializeField] private CharacterController m_characterController;
-    [SerializeField] private simpleStatePlayer m_simpleStatePlayer;
+    [SerializeField] private SimpleStatePlayer m_simpleStatePlayer;
 
 
     Vector3 moveDirection;

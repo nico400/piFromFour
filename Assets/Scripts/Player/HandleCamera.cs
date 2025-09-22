@@ -9,8 +9,8 @@ public class HandleCamera : NetworkBehaviour
     [SerializeField] private Transform m_playerHead;
 
     [Header("config Camera")]
-    [SerializeField] private float m_sencityvityX = 25f;
-    [SerializeField] private float m_sencityvityY = 25f;
+    [SerializeField] private float m_sensitivityX  = 25f;
+    [SerializeField] private float m_sensitivityY = 25f;
     [SerializeField] private float minY = -60f;
     [SerializeField] private float maxY = 60f;
 
@@ -39,12 +39,14 @@ public class HandleCamera : NetworkBehaviour
     {
         m_cameraInput = m_handleInputs.CameraInput;
 
-        rotationX += m_cameraInput.x * m_sencityvityX * Time.deltaTime;
+        rotationX += m_cameraInput.x * m_sensitivityX * Time.deltaTime;
 
-        pitch += -m_cameraInput.y * m_sencityvityY * Time.deltaTime;
+        pitch -= m_cameraInput.y * m_sensitivityY * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minY, maxY);
 
-        transform.rotation = Quaternion.Euler(pitch, rotationX, 0);
+        transform.localRotation = Quaternion.Euler(pitch, 0, 0);
+        transform.parent.localRotation = Quaternion.Euler(0, rotationX, 0);
+
         transform.position = m_playerHead.position;
     }
 }

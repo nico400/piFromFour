@@ -1,9 +1,10 @@
 using Mirror;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
-public class simpleStatePlayer : NetworkBehaviour
+public class SimpleStatePlayer : NetworkBehaviour
 {
-    [SerializeField] private HandleInputs m_handleInputs;   
+    [SerializeField] private HandleInputs m_handleInputs;
 
     enum MovementState
     {
@@ -19,13 +20,25 @@ public class simpleStatePlayer : NetworkBehaviour
     [SerializeField] private float m_walkSpeed = 1.75f;
     [SerializeField] private float m_runSpeed = 3.5f;
     [SerializeField] private float m_crouchSpeed = 0.75f;
+                     private bool m_iCanStandUp = true;
     public float m_currentSpeed { get; private set; }
+    public bool ICanStandUp
+    {
+        get => m_iCanStandUp;
+        set => m_iCanStandUp = value;
+    }
+
+    [SerializeField] private CharacterController m_characterController;
+    [SerializeField] private LayerMask layerNotPlayer;
+
+    
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (!isLocalPlayer) { return; }
-
+        m_characterController = GetComponent<CharacterController>();
         m_handleInputs = GetComponent<HandleInputs>();
     }
 
@@ -34,29 +47,70 @@ public class simpleStatePlayer : NetworkBehaviour
     {
         if (!isLocalPlayer) { return; }
 
-        handleStates();
+        handleStatesSwitchs();
+        switch (m_movementState)
+        {
+            case MovementState.Walking:
+                // Handle walking logic here
+                m_characterController.height = 2f;
+                m_characterController.center = new Vector3(0, 1, 0);
+                m_currentSpeed = m_walkSpeed;
+                break;
+            case MovementState.Running:
+                // Handle running logic here
+                m_characterController.height = 2f;
+                m_characterController.center = new Vector3(0, 1, 0);
+                m_currentSpeed = m_runSpeed;
+                break;
+            case MovementState.Crouching:
+                // Handle crouching logic here
+                m_characterController.height = 1.25f;
+                m_characterController.center = new Vector3(0, 0.625f, 0);
+
+                float radius = m_characterController.radius;
+                float heightMax = 2;
+                Vector3 p1 = transform.position + Vector3.up * ((heightMax / 2 ) + (radius / 2));
+                Vector3 p2 = transform.position + Vector3.up * (heightMax - (radius / 2));
+
+                Collider[] hitColliders = Physics.OverlapCapsule(p1, p2, radius, layerNotPlayer);
+
+                if (hitColliders.Length > 0)
+                    m_iCanStandUp = false;
+                else
+                    m_iCanStandUp = true;
+
+                m_currentSpeed = m_crouchSpeed;
+                break;
+            case MovementState.Idle:
+                // Handle idle logic here
+                m_characterController.height = 2f;
+                m_characterController.center = new Vector3(0, 1, 0);
+                m_currentSpeed = 0;
+                break;
+        }
     }
-    public void handleStates()
+    public void handleStatesSwitchs()
     {
-        if (m_handleInputs.Sprint && m_handleInputs.MoveInput != Vector3.zero)
-        {
+        if (m_handleInputs.Sprint && m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp)
             m_movementState = MovementState.Running;
-            m_currentSpeed = m_runSpeed;
-        }
         else if (m_handleInputs.Crouch)
-        {
             m_movementState = MovementState.Crouching;
-            m_currentSpeed = m_crouchSpeed;
-        }
-        else if (m_handleInputs.MoveInput != Vector3.zero)
-        {
+        else if (m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp)
             m_movementState = MovementState.Walking;
-            m_currentSpeed = m_walkSpeed;
-        }
-        else
-        {
+        else if (m_iCanStandUp)
             m_movementState = MovementState.Idle;
-            m_currentSpeed = 0;
-        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        float radius = m_characterController.radius;
+        float heightMax = 2;
+        Vector3 p1 = transform.position + Vector3.up * ((heightMax / 2) + (radius / 2));
+        Vector3 p2 = transform.position + Vector3.up * (heightMax - (radius / 2));
+
+        Gizmos.DrawWireSphere(p1, radius);
+        Gizmos.DrawWireSphere(p2, radius);
+
     }
 }
