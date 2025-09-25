@@ -1,8 +1,6 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
-using static Mirror.BouncyCastle.Asn1.Cmp.Challenge;
 
 [RequireComponent(typeof(NetworkIdentity), typeof(NetworkTransformReliable))]
 public class ObjectInteractable : NetworkBehaviour, IInteraction
@@ -32,7 +30,6 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         var hand = callerHand.GetComponent<CallInteractivedObj>();
         if (hand.IsHold)
         {
-            print("aaaaaaaaa");
             RpcPickupHold(callerHand.gameObject);
         }
     }

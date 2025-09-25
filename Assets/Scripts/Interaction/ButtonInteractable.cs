@@ -5,7 +5,8 @@ using UnityEngine.Events;
 [RequireComponent(typeof(NetworkIdentity), typeof(NetworkTransformReliable))]
 public class ButtonInteractable : NetworkBehaviour, IInteraction
 {
-    UnityEvent evntButtonActived;
+    public UnityEvent evntButtonActived;
+
     [Command(requiresAuthority = false)]
     public void interactived(NetworkIdentity WhoCallInteractive)
     {

@@ -1,5 +1,4 @@
 using Mirror;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class SimpleStatePlayer : NetworkBehaviour

@@ -19,7 +19,8 @@ public class HandleCamera : NetworkBehaviour
 
     Camera m_camera;
 
-    public float rotationX { get; private set; }
+
+    [SyncVar] private float m_rotationX;
 
     void Start()
     {
@@ -37,16 +38,23 @@ public class HandleCamera : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer) return;
+
         m_cameraInput = m_handleInputs.CameraInput;
 
-        rotationX += m_cameraInput.x * m_sensitivityX * Time.deltaTime;
+        // Calcula rotação
+        m_rotationX += m_cameraInput.x * m_sensitivityX * Time.deltaTime;
 
         pitch -= m_cameraInput.y * m_sensitivityY * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minY, maxY);
 
+        // Aplica rotação da câmera (X)
         transform.localRotation = Quaternion.Euler(pitch, 0, 0);
-        transform.parent.localRotation = Quaternion.Euler(0, rotationX, 0);
 
+        // Aplica rotação do corpo (Y)
+        transform.parent.localRotation = Quaternion.Euler(0, m_rotationX, 0);
+
+        // Segue a cabeça
         transform.position = m_playerHead.position;
     }
 }
