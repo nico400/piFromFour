@@ -57,12 +57,12 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         transform.localRotation = Quaternion.identity;
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Rigidbody>().useGravity = false;
-        ActionWhenStartHold.Invoke();
+        ActionWhenStartHold?.Invoke();
     }
     [ClientRpc]
     void RpcPickupHold(GameObject hand)
     {
-        ActionWhenHold.Invoke();
+        ActionWhenHold?.Invoke();
     }
     [ClientRpc]
     void RpcPickupObjDrop(GameObject hand)
@@ -74,6 +74,6 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         transform.localRotation = Quaternion.identity;
         GetComponent<Rigidbody>().isKinematic = false;
         GetComponent<Rigidbody>().useGravity = true;
-        ActionWhenDrop.Invoke();
+        ActionWhenDrop?.Invoke();
     }
 }

@@ -9,12 +9,13 @@ public class ButtonInteractable : NetworkBehaviour, IInteraction
 
     [Command(requiresAuthority = false)]
     public void interactived(NetworkIdentity WhoCallInteractive)
-    {
+    {       
         RpcButtonActived();
     }
+
     [ClientRpc]
     void RpcButtonActived()
     {
-        evntButtonActived.Invoke();
+        evntButtonActived?.Invoke();
     }
 }

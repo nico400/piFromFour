@@ -19,9 +19,7 @@ public class HandleCamera : NetworkBehaviour
 
     Camera m_camera;
 
-
     [SyncVar] private float m_rotationX;
-
     void Start()
     {
         m_camera = gameObject.GetComponent<Camera>();

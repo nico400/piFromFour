@@ -13,6 +13,7 @@ public class SwitchInteractable : NetworkBehaviour, IInteraction
     [Command(requiresAuthority = false)]
     public void interactived(NetworkIdentity WhoCallInteractive)
     {
+        print("Interactived");
         RpcSwitchAcitived();
     }
     [ClientRpc]
@@ -20,12 +21,12 @@ public class SwitchInteractable : NetworkBehaviour, IInteraction
     {
         if (!isActive)
         {
-            OnSwitchAcitived.Invoke();
+            OnSwitchAcitived?.Invoke();
             isActive = true;
         }
         else
         {
-            OnSwitchDeacitivated.Invoke();
+            OnSwitchDeacitivated?.Invoke();
             isActive = false;
         }
     }
