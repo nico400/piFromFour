@@ -6,7 +6,7 @@ public class CallInteractivedObj : NetworkBehaviour
     [SerializeField] private HandleInputs m_handleInputs;
     [SerializeField] private Transform camTransform;
     [SerializeField] private LayerMask layerInteractables;
-    [SerializeField] private float interactionDistance = 3f;
+    [SerializeField] private float interactionDistance = 1.5f;
     [SerializeField] private GameObject m_handThatInteractPosition;
     [SerializeField] private ObjectInteractable objThatInteract;
     public GameObject handThatInteractPosition
