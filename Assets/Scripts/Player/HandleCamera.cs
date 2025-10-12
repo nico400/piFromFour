@@ -1,58 +1,94 @@
 using Mirror;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class HandleCamera : NetworkBehaviour
 {
-    [SerializeField] private HandleInputs m_handleInputs;
-    [SerializeField] private Transform m_playerHead;
+    public enum CameraMode
+    {
+        FreeLook,
+        TargetLock,
+        LockedCursorFree
+    }
 
-    [Header("config Camera")]
-    [SerializeField] private float m_sensitivityX  = 25f;
-    [SerializeField] private float m_sensitivityY = 25f;
+    [SerializeField] private CameraMode cameraMode = CameraMode.FreeLook;
+    public CameraMode CurrentCameraMode
+    {
+        get => cameraMode;
+        set => cameraMode = value;
+    }
+
+    [SerializeField] private HandleInputs handleInputs;
+    [SerializeField] private Transform playerHead;
+
+    [Header("Configuração da Câmera")]
+    [SerializeField] private float sensitivityX = 25f;
+    [SerializeField] private float sensitivityY = 25f;
     [SerializeField] private float minY = -60f;
     [SerializeField] private float maxY = 60f;
 
-    float pitch;
-    Vector2 m_cameraInput;
+    private float pitch;
+    private float yaw;
+    private Vector2 cameraInput;
+    private Camera cam;
 
-    Camera m_camera;
-
-    [SyncVar] private float m_rotationX;
     void Start()
     {
-        m_camera = gameObject.GetComponent<Camera>();
-        if (!isLocalPlayer)
+        cam = GetComponent<Camera>();
+        if (!isLocalPlayer && cam != null)
         {
-            m_camera.enabled = false;
-            return;
+            cam.enabled = false;
         }
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isLocalPlayer) return;
 
-        m_cameraInput = m_handleInputs.CameraInput;
+        switch (cameraMode)
+        {
+            case CameraMode.FreeLook:
+                HandleFreeLook();
+                break;
+            case CameraMode.TargetLock:
+                SetCursorState(CursorLockMode.Locked, false);
+                break;
+            case CameraMode.LockedCursorFree:
+                SetCursorState(CursorLockMode.Confined, true);
+                break;
+        }
+    }
 
-        // Calcula rotação
-        m_rotationX += m_cameraInput.x * m_sensitivityX * Time.deltaTime;
+    private void HandleFreeLook()
+    {
+        SetCursorState(CursorLockMode.Locked, false);
 
-        pitch -= m_cameraInput.y * m_sensitivityY * Time.deltaTime;
+        cameraInput = handleInputs.CameraInput;
+
+        yaw += cameraInput.x * sensitivityX * Time.deltaTime;
+        pitch -= cameraInput.y * sensitivityY * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minY, maxY);
 
-        // Aplica rotação da câmera (X)
+        // Rotaciona a câmera no eixo X (pitch)
         transform.localRotation = Quaternion.Euler(pitch, 0, 0);
 
-        // Aplica rotação do corpo (Y)
-        transform.parent.localRotation = Quaternion.Euler(0, m_rotationX, 0);
+        // Rotaciona o corpo do player no eixo Y (yaw)
+        if (transform.parent != null)
+            transform.parent.localRotation = Quaternion.Euler(0, yaw, 0);
 
-        // Segue a cabeça
-        transform.position = m_playerHead.position;
+        // Segue a cabeça do player
+        if (playerHead != null)
+            transform.position = playerHead.position;
+    }
+
+    private void SetCursorState(CursorLockMode mode, bool visible)
+    {
+        Cursor.lockState = mode;
+        Cursor.visible = visible;
+    }
+
+    public void SetCameraMode(CameraMode mode)
+    {
+        cameraMode = mode;
     }
 }

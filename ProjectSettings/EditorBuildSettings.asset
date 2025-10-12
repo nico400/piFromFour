@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Multiplayer.unity
     guid: b129118024063234396ae7f2cccf0033
+  - enabled: 1
+    path: Assets/Scenes/Blockout.unity
+    guid: 8b3ead1a403571045ad7db0ec0fdfe85
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

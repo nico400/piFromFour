@@ -1,18 +1,18 @@
 using Mirror;
+using System.Diagnostics;
 using UnityEngine;
 
 public class SimpleStatePlayer : NetworkBehaviour
 {
     [SerializeField] private HandleInputs m_handleInputs;
-
-    enum MovementState
+    private enum MovementState
     {
         Walking,
         Running,
         Crouching,
-        Idle
+        Idle,
+        Interacting
     }
-
     [SerializeField] private MovementState m_movementState;
 
     // Current speed of the player
@@ -20,18 +20,22 @@ public class SimpleStatePlayer : NetworkBehaviour
     [SerializeField] private float m_runSpeed = 3.5f;
     [SerializeField] private float m_crouchSpeed = 0.75f;
                      private bool m_iCanStandUp = true;
+    [SyncVar]        private bool m_isInteracting = false;
     public float m_currentSpeed { get; private set; }
     public bool ICanStandUp
     {
         get => m_iCanStandUp;
         set => m_iCanStandUp = value;
     }
+    public bool IsInteracting
+    {
+        get => m_isInteracting;
+        set => m_isInteracting = value;
+    }
+    public void setInteractingValue(bool value) => m_isInteracting = value;
 
     [SerializeField] private CharacterController m_characterController;
     [SerializeField] private LayerMask layerNotPlayer;
-
-    
-
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -86,17 +90,25 @@ public class SimpleStatePlayer : NetworkBehaviour
                 m_characterController.center = new Vector3(0, 1, 0);
                 m_currentSpeed = 0;
                 break;
+            case MovementState.Interacting:
+                // Handle idle logic here
+                m_characterController.height = 2f;
+                m_characterController.center = new Vector3(0, 1, 0);
+                m_currentSpeed = 0;
+                break;
         }
     }
     public void handleStatesSwitchs()
     {
-        if (m_handleInputs.Sprint && m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp)
+        if (m_handleInputs.Sprint && m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp && !m_isInteracting)
             m_movementState = MovementState.Running;
-        else if (m_handleInputs.Crouch)
+        else if (m_handleInputs.Crouch && !m_isInteracting)
             m_movementState = MovementState.Crouching;
-        else if (m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp)
+        else if (m_handleInputs.MoveInput != Vector3.zero && m_iCanStandUp && !m_isInteracting)
             m_movementState = MovementState.Walking;
-        else if (m_iCanStandUp)
+        else if(m_isInteracting)
+            m_movementState = MovementState.Interacting;
+        else if (m_iCanStandUp && !m_isInteracting)
             m_movementState = MovementState.Idle;
     }
 

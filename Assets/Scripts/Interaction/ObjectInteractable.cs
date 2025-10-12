@@ -21,7 +21,7 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         {
             m_permissionThatHoldThisObject = false;
             RpcPickupObj(callerHand.gameObject);
-            hand.setHoldParam(true);
+            hand.SetHoldParam(true);
         }
     }
     [Command(requiresAuthority = false)]
@@ -41,14 +41,14 @@ public class ObjectInteractable : NetworkBehaviour, IInteraction
         {
             m_permissionThatHoldThisObject = true;
             RpcPickupObjDrop(callerHand.gameObject);
-            hand.setHoldParam(false);
+            hand.SetHoldParam(false);
         }
     }
 
     [ClientRpc]
     void RpcPickupObj(GameObject hand)
     {
-        var myHand = hand.GetComponent<CallInteractivedObj>().handThatInteractPosition;
+        var myHand = hand.GetComponent<CallInteractivedObj>().HandThatInteractPosition;
         var animationPickUp = hand.GetComponent<AnimationPickUpWeight>();
         animationPickUp.setPickUp(true);
 
