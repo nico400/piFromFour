@@ -361,7 +361,7 @@ MonoBehaviour:
   syncInterval: 0
   pointList: {fileID: 0}
   agent: {fileID: 7212862280012159105}
-  patrolSpeed: 1.5
+  patrolSpeed: 2
 --- !u!114 &3148765352804367247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1916cc8440a144b4ea64525916638b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rangeSphere: 7
+  rangeSphere: 12.24
   angleView: 0.41
   heightView: 3
   playerLayer:
