@@ -54,7 +54,7 @@ public class HandleCamera : NetworkBehaviour
                 SetCursorState(CursorLockMode.Locked, false);
                 break;
             case CameraMode.LockedCursorFree:
-                SetCursorState(CursorLockMode.Confined, true);
+                HandleLockedCursorFree();
                 break;
         }
     }
@@ -79,6 +79,11 @@ public class HandleCamera : NetworkBehaviour
         // Segue a cabeça do player
         if (playerHead != null)
             transform.position = playerHead.position;
+    }
+    private void HandleLockedCursorFree()
+    {
+        SetCursorState(CursorLockMode.Confined, true);
+
     }
 
     private void SetCursorState(CursorLockMode mode, bool visible)

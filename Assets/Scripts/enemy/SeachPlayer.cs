@@ -33,66 +33,74 @@ public class SeachPlayer : MonoBehaviour
     public bool playerFound { get; private set; }
     public bool playerInView { get; private set; }
 
+    private bool IsPlayerVisible(Transform p)
+    {
+        if (p == null) return false;
+
+        float distance = Vector3.Distance(transform.position, p.position);
+        if (distance > rangeSphere) return false;
+
+        float maxY = transform.position.y + heightView;
+        float minY = transform.position.y;
+        if (!(p.position.y - 0.15f >= minY && p.position.y < maxY)) return false;
+
+        Vector3 dir = (p.position - transform.position).normalized;
+        Vector3 local = transform.InverseTransformVector(dir).normalized;
+        if (local.z <= angleView) return false;
+
+        return true;
+    }
+
     public void Update()
     {
-        // if player is in range of the enemy, and player not stealth, the enemy will follow the player
-        //create sphere around the enemy to detect the player
-        Collider[] colliders = Physics.OverlapSphere(transform.position, rangeSphere, playerLayer);
-        if (colliders.Length > 0)
+
+        if (playerFound && playerTransform != null && IsPlayerVisible(playerTransform))
         {
-            // check for each collider if is the player
-            foreach (var collider in colliders)
+            time = 0f;
+            lastPositionPlayerLose = playerTransform.position;
+            playerInView = true;
+            return; 
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, rangeSphere, playerLayer);
+
+        Transform found = null;
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Transform t = colliders[i].transform;
+            if (IsPlayerVisible(t))
             {
-                // get the player transform
-                collider.TryGetComponent(out Transform player);
-                playerTransform = player;
-                // get distance and direction to the player
-                float distance = Vector3.Distance(transform.position, playerTransform.position);
-                Vector3 vecToWorld = (playerTransform.position - transform.position).normalized;
-                Vector3 vecToTarget = transform.InverseTransformVector(vecToWorld).normalized;
-
-                // check if the player is in range
-                if (distance < rangeSphere)
-                {
-                    float maxValue = transform.position.y + heightView;
-                    float minValue = transform.position.y;
-                    // check if the player is in height view
-                    if (playerTransform.position.y - 0.15f >= minValue || playerTransform.position.y < maxValue)
-                    {
-                        // check if the player is in front of the enemy
-                        if (vecToTarget.z > angleView)
-                        {
-                            // if the player is not stealth, the enemy will follow the player
-                            if (!playerFound)
-                                _onPlayerDetected?.Invoke();
-
-                            lastPositionPlayerLose = playerTransform.position;
-                            time = 0;
-                            playerFound = true;
-                            playerInView = true;
-                        }
-                        else // if the player is not in front of the enemy
-                        {
-                            playerInView = false;
-                        }
-                    }
-                }
+                found = t;
+                break;
             }
         }
-        else if (playerInView && playerFound) // if the player is out of range, but was in view
-        {
-            playerInView = false;
-        }
 
-        if (playerFound && !playerInView) // if the player is out of range, but was found
+        if (found != null)
         {
-            // start timer to lose the player
-            time += Time.deltaTime;
+
+            playerTransform = found;
             lastPositionPlayerLose = playerTransform.position;
-            if (time >= timerToLosePlayer) // if the timer is over, lose the player
+            time = 0f;
+            playerFound = true;
+            playerInView = true;
+            _onPlayerDetected?.Invoke();
+        }
+        else
+        {
+
+            playerInView = false;
+            if (playerFound)
             {
-                playerFound = false;
-                playerTransform = null;
+                time += Time.deltaTime;
+                if (playerTransform != null)
+                    lastPositionPlayerLose = playerTransform.position;
+
+                if (time >= timerToLosePlayer)
+                {
+                    playerFound = false;
+                    playerTransform = null;
+                    time = 0f;
+                }
             }
         }
     }
@@ -101,7 +109,7 @@ public class SeachPlayer : MonoBehaviour
     {
         #if UNITY_EDITOR
 
-        Handles.DrawWireDisc(transform.position  + Vector3.up * - 0.15f, Vector3.up, rangeSphere);
+        Handles.DrawWireDisc(transform.position + Vector3.up * -0.15f, Vector3.up, rangeSphere);
         Handles.DrawWireDisc(transform.position + Vector3.up * heightView, Vector3.up, rangeSphere);
 
 

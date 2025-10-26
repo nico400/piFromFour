@@ -843,7 +843,7 @@ GameObject:
   - component: {fileID: 189607492}
   - component: {fileID: 189607491}
   - component: {fileID: 189607490}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Arch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2016,7 +2016,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 311775202}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: cameraLook
   m_TagString: Untagged
   m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
@@ -2324,7 +2324,7 @@ GameObject:
   - component: {fileID: 392822195}
   - component: {fileID: 392822194}
   - component: {fileID: 392822193}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7342,8 +7342,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  isInteractableOn: 0
-  otherInteractable: {fileID: 1222518055}
+  m_isInteractableOn: 0
+  m_otherInteractable: {fileID: 1222518055}
   m_playerTargetPosition: {fileID: 2029919573}
   isInteractivedStart:
     m_PersistentCalls:
@@ -7505,8 +7505,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  isInteractableOn: 0
-  otherInteractable: {fileID: 1180590986}
+  m_isInteractableOn: 0
+  m_otherInteractable: {fileID: 1180590986}
   m_playerTargetPosition: {fileID: 1815302812}
   isInteractivedStart:
     m_PersistentCalls:
@@ -9539,7 +9539,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1463171212}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: lock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9956,7 +9956,7 @@ GameObject:
   - component: {fileID: 1528421805}
   - component: {fileID: 1528421804}
   - component: {fileID: 1528421803}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11155,7 +11155,7 @@ GameObject:
   - component: {fileID: 1640866980}
   - component: {fileID: 1640866979}
   - component: {fileID: 1640866978}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InteractablePadlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11506,13 +11506,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1640866970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c0b62a1579a4824ab8aaacefd1134b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 90551cac7770c68458c23813b558adb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
   m_isInteractableOn: 0
+  m_playerCamTargetPosition: {fileID: 311775202}
 --- !u!114 &1640866979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14858,7 +14859,7 @@ GameObject:
   - component: {fileID: 2132847296}
   - component: {fileID: 2132847295}
   - component: {fileID: 2132847294}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

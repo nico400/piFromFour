@@ -8,10 +8,12 @@ public class CallInteractivedObj : NetworkBehaviour
     [SerializeField] private LayerMask m_layerInteractables;
     [SerializeField] private float m_interactionDistance = 1.5f;
     [SerializeField] private GameObject m_handThatInteractPosition;
+    [SerializeField] private Transform m_cam;
     [SyncVar] private ObjectInteractable m_objThatInteract;
     [SyncVar] private bool m_isHold = false;
     [SyncVar] private DoubleInteractable m_doubleInteractable;
     [SyncVar] private bool m_canInteract = true;
+    [SyncVar] private ClickInteractable m_clickInteractable;
 
     public GameObject HandThatInteractPosition => m_handThatInteractPosition;
     public bool IsHold
@@ -28,6 +30,11 @@ public class CallInteractivedObj : NetworkBehaviour
     {
         get => m_canInteract;
         set => m_canInteract = value;
+    }
+    public ClickInteractable ClickInteractableRef
+    {
+        get => m_clickInteractable;
+        set => m_clickInteractable = value;
     }
 
     void Start()
@@ -53,9 +60,16 @@ public class CallInteractivedObj : NetworkBehaviour
             {
                 m_objThatInteract = hit.collider.GetComponent<ObjectInteractable>();
                 m_doubleInteractable = hit.collider.GetComponent<DoubleInteractable>();
+                m_clickInteractable = hit.collider.GetComponent<ClickInteractable>();
 
                 if (TryGetComponent<PlayerInteractivedFeatures>(out var playerFeatures))
-                    playerFeatures.MoveAndInteract(m_doubleInteractable, netIdentity);
+                {
+                    if (m_doubleInteractable != null)
+                    {
+                        playerFeatures.MoveAndInteract(m_doubleInteractable, netIdentity);
+                    }
+                }
+                    
 
                 interactable.interactived(netIdentity);
             }
@@ -78,12 +92,7 @@ public class CallInteractivedObj : NetworkBehaviour
     {
         if (m_doubleInteractable != null && m_handleInputs.DropItem && !m_canInteract)
         {
-            m_doubleInteractable.SetInteractable(false, netIdentity);
-            m_doubleInteractable.StopAllCoroutines();
-
-            var cam = GetComponentInChildren<HandleCamera>();
-            if (cam != null)
-                cam.SetCameraMode(HandleCamera.CameraMode.FreeLook);
+            m_doubleInteractable.setInteractivedToFalse(netIdentity);
             m_doubleInteractable = null;
         }
     }

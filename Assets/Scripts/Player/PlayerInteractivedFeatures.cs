@@ -6,13 +6,33 @@ public class PlayerInteractivedFeatures : NetworkBehaviour
 {
 
     private bool isMovingToInteraction = false;
-    private float moveSpeed = 3.5f;
+    private bool isCamMovingToInteraction = false;
 
-    // Função pública chamada pelo script de interação
+    public void MoveCamAndInteractived(ClickInteractable target, Transform cam, NetworkIdentity player)
+    {
+        if (!isLocalPlayer) return;
+        if (isCamMovingToInteraction) return;
+        StartCoroutine(CamMoveToInteraction(target, cam, player));
+    }
+
+    IEnumerator CamMoveToInteraction(ClickInteractable target, Transform cam, NetworkIdentity player)
+    {
+        isCamMovingToInteraction = true;
+
+        Transform destination = target.PlayerCamTargetPosition;
+        while (Vector3.Distance(cam.transform.position, destination.position) > 0.1f)
+        {
+            float moveSpeed = 15f;
+            transform.position = Vector3.MoveTowards(transform.position, destination.position, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+        isCamMovingToInteraction = false;
+    }
+
     public void MoveAndInteract(DoubleInteractable target, NetworkIdentity myIdentity)
     {
         if (!isLocalPlayer) return;
-        if (isMovingToInteraction) return; // evita duplicar
+        if (isMovingToInteraction) return;
 
         StartCoroutine(MoveToInteraction(target, myIdentity));
     }
@@ -22,16 +42,12 @@ public class PlayerInteractivedFeatures : NetworkBehaviour
         isMovingToInteraction = true;
 
         Transform destination = target.PlayerTargetPosition;
-        // Mover suavemente até o ponto de interação
         while (Vector3.Distance(transform.position, destination.position) > 0.1f)
         {
+            float moveSpeed = 15f;
             transform.position = Vector3.MoveTowards(transform.position, destination.position, moveSpeed * Time.deltaTime);
             yield return null;
         }
-
-        // Quando chega, chama o comando para o servidor processar
-        target.interactived(myIdentity);
-
         isMovingToInteraction = false;
     }
     [TargetRpc]

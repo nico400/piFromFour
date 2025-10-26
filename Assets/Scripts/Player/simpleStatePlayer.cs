@@ -78,9 +78,15 @@ public class SimpleStatePlayer : NetworkBehaviour
                 Collider[] hitColliders = Physics.OverlapCapsule(p1, p2, radius, layerNotPlayer);
 
                 if (hitColliders.Length > 0)
+                {
+
                     m_iCanStandUp = false;
+                }
                 else
+                {
+
                     m_iCanStandUp = true;
+                }
 
                 m_currentSpeed = m_crouchSpeed;
                 break;
