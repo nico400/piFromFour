@@ -6,18 +6,25 @@ public class StateManagerEnemy : NetworkBehaviour
     public static StateManagerEnemy instance;
 
     States currentState;
+    public States CurrentState
+    { 
+        get => currentState;
+        set => currentState = value;
+    }
 
     //states of the enemy
-    public idleState idle = new idleState();
-    public patrolState patrol = new patrolState();
-    public chaseState chase = new chaseState();
+    [SyncVar] public IdleState idle = new IdleState();
+    [SyncVar] public PatrolState patrol = new PatrolState();
+    [SyncVar] public ChaseState chase = new ChaseState();
+    [SyncVar] public AttackState attack = new AttackState();
+    [SyncVar] public ScareState scare = new ScareState();
 
     private void Awake()
     {
         instance = this;
 
-        idle = GetComponent<idleState>();
-        patrol = GetComponent<patrolState>();
+        idle = GetComponent<IdleState>();
+        patrol = GetComponent<PatrolState>();
     }
 
     private void Start()

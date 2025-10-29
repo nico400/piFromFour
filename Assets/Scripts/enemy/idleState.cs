@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class idleState : NetworkBehaviour, States
+public class IdleState : NetworkBehaviour, States
 {
     /// <summary>
     /// enter in idle state, wait seconds and go to patrol state,
@@ -12,7 +12,6 @@ public class idleState : NetworkBehaviour, States
                      private float timer = 0f;
     public void enterState()
     {
-        Debug.Log("Entering Idle State");
         timer = 0f;
 
         SeachPlayer._onPlayerDetected += () => {

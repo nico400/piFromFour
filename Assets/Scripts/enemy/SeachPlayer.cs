@@ -30,6 +30,12 @@ public class SeachPlayer : MonoBehaviour
     public static event OnPlayerDetected _onPlayerDetected;
 
     public Transform playerTransform { get; private set; }
+    [SerializeField] private GameObject playerObj;
+    public GameObject PlayerOBJ
+    {
+        get => playerObj;
+        set => playerObj = value;
+    }
     public bool playerFound { get; private set; }
     public bool playerInView { get; private set; }
 
@@ -41,7 +47,7 @@ public class SeachPlayer : MonoBehaviour
         if (distance > rangeSphere) return false;
 
         float maxY = transform.position.y + heightView;
-        float minY = transform.position.y;
+        float minY = transform.position.y - 0.25f;
         if (!(p.position.y - 0.15f >= minY && p.position.y < maxY)) return false;
 
         Vector3 dir = (p.position - transform.position).normalized;
@@ -62,7 +68,8 @@ public class SeachPlayer : MonoBehaviour
             return; 
         }
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, rangeSphere, playerLayer);
+        Vector3 pos = transform.position + Vector3.up * -0.25f;
+        Collider[] colliders = Physics.OverlapSphere(pos, rangeSphere, playerLayer);
 
         Transform found = null;
         for (int i = 0; i < colliders.Length; i++)
@@ -77,8 +84,10 @@ public class SeachPlayer : MonoBehaviour
 
         if (found != null)
         {
+            // player detected
 
             playerTransform = found;
+            playerObj = playerTransform.gameObject;
             lastPositionPlayerLose = playerTransform.position;
             time = 0f;
             playerFound = true;
@@ -89,6 +98,7 @@ public class SeachPlayer : MonoBehaviour
         {
 
             playerInView = false;
+            playerObj = null;
             if (playerFound)
             {
                 time += Time.deltaTime;
@@ -103,13 +113,24 @@ public class SeachPlayer : MonoBehaviour
                 }
             }
         }
+
+        if (playerObj != null)
+        {
+            // check if player is crouching and can't stand up (Stealfh)
+            playerObj.TryGetComponent<SimpleStatePlayer>(out SimpleStatePlayer statePlayer);
+            if (!statePlayer.ICanStandUp)
+            {
+                return;
+            }
+        }
     }
 
     private void OnDrawGizmos()
     {
         #if UNITY_EDITOR
 
-        Handles.DrawWireDisc(transform.position + Vector3.up * -0.15f, Vector3.up, rangeSphere);
+        Vector3 pos = transform.position + Vector3.up * -0.25f;
+        Handles.DrawWireDisc(pos, Vector3.up, rangeSphere);
         Handles.DrawWireDisc(transform.position + Vector3.up * heightView, Vector3.up, rangeSphere);
 
 

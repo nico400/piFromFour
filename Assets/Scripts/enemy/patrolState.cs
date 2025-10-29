@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class patrolState : NetworkBehaviour, States
+public class PatrolState : NetworkBehaviour, States
 {
     [SerializeField] PointList pointList;
     [SerializeField] NavMeshAgent agent;

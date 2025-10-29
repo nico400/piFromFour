@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8073987212994410899}
   - component: {fileID: 5311255637787185564}
   - component: {fileID: 6126066545809624386}
+  - component: {fileID: 7546538850359659048}
   - component: {fileID: 1063955122739120569}
   - component: {fileID: 9181271161279243976}
   m_Layer: 3
@@ -108,10 +109,37 @@ MonoBehaviour:
       m_Calls: []
   ActionWhenHold:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7546538850359659048}
+        m_TargetAssemblyTypeName: EnemyAlertEvent, Assembly-CSharp
+        m_MethodName: OnObjectAction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   ActionWhenDrop:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7546538850359659048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162167217835573034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e98fc9105324c64b9fe98648914580c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!54 &1063955122739120569
 Rigidbody:
   m_ObjectHideFlags: 0

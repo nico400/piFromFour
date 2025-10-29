@@ -1,4 +1,4 @@
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
 
 public class CallInteractivedObj : NetworkBehaviour
@@ -8,33 +8,28 @@ public class CallInteractivedObj : NetworkBehaviour
     [SerializeField] private LayerMask m_layerInteractables;
     [SerializeField] private float m_interactionDistance = 1.5f;
     [SerializeField] private GameObject m_handThatInteractPosition;
-    [SerializeField] private Transform m_cam;
-    [SyncVar] private ObjectInteractable m_objThatInteract;
-    [SyncVar] private bool m_isHold = false;
-    [SyncVar] private DoubleInteractable m_doubleInteractable;
-    [SyncVar] private bool m_canInteract = true;
-    [SyncVar] private ClickInteractable m_clickInteractable;
 
+    [SyncVar] private NetworkIdentity m_objThatInteractNetId;
+    [SyncVar] private bool m_isHold = false;
+    [SyncVar] private bool m_canInteract = true;
+    [SyncVar]
+    [SerializeField] private ObjectInteractable m_objThatInteract;
     public GameObject HandThatInteractPosition => m_handThatInteractPosition;
-    public bool IsHold
+    public bool IsHold { get => m_isHold; set => m_isHold = value; }
+    public bool CanInteract { get => m_canInteract; set => m_canInteract = value; }
+    public ObjectInteractable ObjThatInteract
     {
-        get => m_isHold;
-        set => m_isHold = value;
-    }
-    public DoubleInteractable DoubleInteractableRef
-    {
-        get => m_doubleInteractable;
-        set => m_doubleInteractable = value;
-    }
-    public bool CanInteract
-    {
-        get => m_canInteract;
-        set => m_canInteract = value;
-    }
-    public ClickInteractable ClickInteractableRef
-    {
-        get => m_clickInteractable;
-        set => m_clickInteractable = value;
+        get
+        {
+            if (m_objThatInteract == null && m_objThatInteractNetId != null)
+                m_objThatInteract = m_objThatInteractNetId.GetComponent<ObjectInteractable>();
+            return m_objThatInteract;
+        }
+        set
+        {
+            m_objThatInteract = value;
+            m_objThatInteractNetId = value != null ? value.netIdentity : null;
+        }
     }
 
     void Start()
@@ -48,52 +43,59 @@ public class CallInteractivedObj : NetworkBehaviour
 
         HandleRaycastInteraction();
         HandleObjectInteractions();
-        HandleInteractableRelease();
     }
 
     private void HandleRaycastInteraction()
     {
-        if (Physics.Raycast(m_camTransform.position, m_camTransform.forward, out RaycastHit hit, m_interactionDistance, m_layerInteractables))
+        if (!Physics.Raycast(m_camTransform.position, m_camTransform.forward, out RaycastHit hit, m_interactionDistance, m_layerInteractables))
+            return;
+
+        IInteraction interactable = hit.collider.GetComponent<IInteraction>();
+        if (interactable == null) return;
+
+        if (!m_isHold && m_canInteract && m_handleInputs.Interaction)
         {
-            IInteraction interactable = hit.collider.GetComponent<IInteraction>();
-            if (interactable != null && !m_isHold && m_canInteract && m_handleInputs.Interaction)
+            var interactableObj = hit.collider.GetComponent<ObjectInteractable>();
+            if (interactableObj != null)
             {
-                m_objThatInteract = hit.collider.GetComponent<ObjectInteractable>();
-                m_doubleInteractable = hit.collider.GetComponent<DoubleInteractable>();
-                m_clickInteractable = hit.collider.GetComponent<ClickInteractable>();
+                SetHeldObject(interactableObj);
+                interactableObj.interactived(netIdentity);
+            }
+        }
 
-                if (TryGetComponent<PlayerInteractivedFeatures>(out var playerFeatures))
-                {
-                    if (m_doubleInteractable != null)
-                    {
-                        playerFeatures.MoveAndInteract(m_doubleInteractable, netIdentity);
-                    }
-                }
-                    
-
-                interactable.interactived(netIdentity);
+        else if (m_isHold && ObjThatInteract != null && m_handleInputs.Interaction)
+        {
+            var useTarget = hit.collider.GetComponent<UseOnTargetInteractable>();
+            if (useTarget != null)
+            {
+                useTarget.interactived(netIdentity);
             }
         }
     }
 
-    private void HandleObjectInteractions()
+    public void SetHeldObject(ObjectInteractable obj)
     {
-        if (m_isHold && m_objThatInteract != null)
-        {
-            if (m_handleInputs.DropItem)
-                m_objThatInteract.DropObj(netIdentity);
-
-            if (m_handleInputs.Interaction)
-                m_objThatInteract.HoldObj(netIdentity);
-        }
+        ObjThatInteract = obj;
+        CmdSetHeldObject(obj.netIdentity);
+    }
+    [Command]
+    private void CmdSetHeldObject(NetworkIdentity objNetId)
+    {
+        if (objNetId != null)
+            ObjThatInteract = objNetId.GetComponent<ObjectInteractable>();
+        else
+            ObjThatInteract = null;
     }
 
-    private void HandleInteractableRelease()
+    private void HandleObjectInteractions()
     {
-        if (m_doubleInteractable != null && m_handleInputs.DropItem && !m_canInteract)
+        if (m_isHold && ObjThatInteract != null)
         {
-            m_doubleInteractable.setInteractivedToFalse(netIdentity);
-            m_doubleInteractable = null;
+            if (m_handleInputs.DropItem)
+                ObjThatInteract.DropObj(netIdentity);
+
+            if (m_handleInputs.Interaction)
+                ObjThatInteract.HoldObj(netIdentity);
         }
     }
 
