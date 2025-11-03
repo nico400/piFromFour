@@ -118,6 +118,7 @@ public class SeachPlayer : MonoBehaviour
         {
             // check if player is crouching and can't stand up (Stealfh)
             playerObj.TryGetComponent<SimpleStatePlayer>(out SimpleStatePlayer statePlayer);
+            print(statePlayer.ICanStandUp);
             if (!statePlayer.ICanStandUp)
             {
                 return;
