@@ -1,109 +1,110 @@
 using Mirror;
 using Steamworks;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-// Classe responsável por gerenciar o lobby Steam integrado ao Mirror
 public class SteamLobby : MonoBehaviour
 {
-    // Referência ao botão de host na interface
-    [SerializeField] private GameObject hostBTN = null;
-    // Texto para exibir status da Steam
     [SerializeField] private TextMeshProUGUI text;
-    // Chave usada para salvar o endereço do host no lobby
-    [SerializeField] string hostAdress = "HostAddress";
-
-    // Referência ao NetworkManager do Mirror
+    [SerializeField] private string hostAddressKey = "HostAddress";
     [SerializeField] private NetworkManager m_networkManager;
 
-    // Callbacks para eventos do Steamworks
-    protected Callback<LobbyCreated_t> m_LobbyCreated;
-    protected Callback<GameLobbyJoinRequested_t> m_GameLobbyJoinRequested;
-    protected Callback<LobbyEnter_t> m_LobbyEntered;
+    private Callback<LobbyCreated_t> m_LobbyCreated;
+    private Callback<GameLobbyJoinRequested_t> m_GameLobbyJoinRequested;
+    private Callback<LobbyEnter_t> m_LobbyEntered;
 
-    // Inicialização do lobby e registro dos callbacks
-    private void Awake()
+    private bool initialized = false;
+
+    private IEnumerator Start()
     {
-        // Verifica se a Steam está inicializada
-        if (!SteamManager.Initialized)
+        // Aguarda até a Steam estar inicializada
+        while (!SteamManager.Initialized)
         {
-            text.text = "Steam is not initialized.";
-            return;
+            if (text != null)
+                text.text = "Waiting for Steam initialization...";
+            yield return null;
         }
-        else
+        while (m_networkManager == null)
         {
-            text.text = "Steam initialized.";
+            m_networkManager = FindFirstObjectByType<NetworkManager>();
+            yield return null;
         }
 
-        // Registra os callbacks para eventos de lobby
+        initialized = true;
+        if (text != null)
+            text.text = "Steam initialized successfully.";
+
+        // Registra os callbacks da Steam
         m_LobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
         m_GameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
         m_LobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
     }
 
-    // Método chamado ao clicar no botão de host para criar um lobby
     public void Host_lobby()
     {
-        print("Creating Lobby");
-        if (!SteamManager.Initialized) return;
-       
-
-        // Cria um lobby público na Steam
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, m_networkManager.maxConnections);
-        // Desativa o botão de host após criar o lobby
-        hostBTN.SetActive(false);
-    }
-
-    // Callback chamado quando o lobby é criado
-    private void OnLobbyCreated(LobbyCreated_t callback)
-    {
-        // Verifica se a criação do lobby foi bem-sucedida
-        if (callback.m_eResult != EResult.k_EResultOK)
+        if (!initialized)
         {
-            Debug.LogError("Lobby creation failed");
+            Debug.LogWarning("Steam not initialized yet, cannot host lobby.");
             return;
         }
 
-        Debug.Log("Lobby created successfully");
+        if (m_networkManager == null)
+        {
+            Debug.LogError("NetworkManager reference is missing!");
+            return;
+        }
 
-        // Inicia o host do Mirror
+        Debug.Log("Creating Steam lobby...");
+        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, m_networkManager.maxConnections);
+    }
+
+    private void OnLobbyCreated(LobbyCreated_t callback)
+    {
+        if (callback.m_eResult != EResult.k_EResultOK)
+        {
+            Debug.LogError("Lobby creation failed!");
+            return;
+        }
+
+        Debug.Log("Lobby created successfully — starting host.");
         m_networkManager.StartHost();
 
-        // Salva o SteamID do host no lobby para que outros jogadores possam conectar
         SteamMatchmaking.SetLobbyData(
             new CSteamID(callback.m_ulSteamIDLobby),
-            hostAdress,
+            hostAddressKey,
             SteamUser.GetSteamID().ToString()
         );
     }
 
-    // Callback chamado quando há um pedido para entrar no lobby
     private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
     {
-        Debug.Log("Join request received");
-        // Entra no lobby solicitado
+        Debug.Log("Join request received — joining lobby...");
         SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
     }
 
-    // Callback chamado quando o jogador entra no lobby
     private void OnLobbyEntered(LobbyEnter_t callback)
     {
-        Debug.Log("Joined lobby successfully");
 
-        // Se já for host, não faz nada
-        if (NetworkServer.active) return;
+        if (SceneManager.GetActiveScene().name != "MainGame")
+        {
+            print("entrei na cena");
+            SceneManager.LoadScene("MainGame");
+        }
 
-        // Recupera o SteamID do host salvo no lobby
+
+        Debug.Log("Joined Steam lobby.");
+
+        if (NetworkServer.active)
+            return;
+
         string hostAddress = SteamMatchmaking.GetLobbyData(
             new CSteamID(callback.m_ulSteamIDLobby),
-            hostAdress
+            hostAddressKey
         );
 
-        // Define o endereço de rede do NetworkManager para conectar ao host
-        // Com FizzySteamworks, isso é um SteamID, não um IP
         m_networkManager.networkAddress = hostAddress;
-
-        // Inicia o cliente do Mirror para conectar ao host
         m_networkManager.StartClient();
     }
 }

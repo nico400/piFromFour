@@ -31,7 +31,7 @@ public class PlayersConnectedStart : NetworkBehaviour
     IEnumerator WaitPlayerClientSpawn()
     {
         StartCoroutine(FadeIn());
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(5f);
         StartCoroutine(FadeOut());
         yield return new WaitForSeconds(1.75f);
         animTransitionStart.SetBool("IsClose", false);

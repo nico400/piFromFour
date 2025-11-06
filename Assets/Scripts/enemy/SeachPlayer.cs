@@ -43,6 +43,8 @@ public class SeachPlayer : MonoBehaviour
     {
         if (p == null) return false;
 
+        if (!HasLineOfSight(p)) return false;
+
         float distance = Vector3.Distance(transform.position, p.position);
         if (distance > rangeSphere) return false;
 
@@ -59,6 +61,30 @@ public class SeachPlayer : MonoBehaviour
 
     public void Update()
     {
+        if (playerObj != null)
+        {
+
+            playerObj.TryGetComponent<SimpleStatePlayer>(out SimpleStatePlayer statePlayer);
+
+            // Se o player está escondido...
+            if (!statePlayer.ICanStandUp)
+            {
+                playerInView = false;
+                if (playerFound)
+                {
+                    time += Time.deltaTime;
+                    if (time >= 0.5f)
+                    {
+                        playerFound = false;
+                        playerTransform = null;
+                        playerObj = null;
+                        time = 0f;
+                    }
+                }
+
+                return;
+            }
+        }
 
         if (playerFound && playerTransform != null && IsPlayerVisible(playerTransform))
         {
@@ -114,18 +140,18 @@ public class SeachPlayer : MonoBehaviour
             }
         }
 
-        if (playerObj != null)
-        {
-            // check if player is crouching and can't stand up (Stealfh)
-            playerObj.TryGetComponent<SimpleStatePlayer>(out SimpleStatePlayer statePlayer);
-            print(statePlayer.ICanStandUp);
-            if (!statePlayer.ICanStandUp)
-            {
-                return;
-            }
-        }
+
     }
 
+    private bool HasLineOfSight(Transform target)
+    {
+        Vector3 dir = (target.position - transform.position).normalized;
+        if (Physics.Raycast(transform.position + Vector3.up * 1.5f, dir, out RaycastHit hit, rangeSphere))
+        {
+            return hit.transform == target;
+        }
+        return false;
+    }
     private void OnDrawGizmos()
     {
         #if UNITY_EDITOR
