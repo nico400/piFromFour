@@ -438,7 +438,7 @@ GameObject:
   - component: {fileID: 381516738186006337}
   m_Layer: 7
   m_Name: PlayerController
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -529,7 +529,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 1
-  animator: {fileID: 8420182471444632609}
+  animator: {fileID: 4679099508172635077}
 --- !u!143 &4579643116983324052
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1569,11 +1569,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4004226320196774730, guid: 73ffbc06802a247cfb1b26f4ee67eba8, type: 3}
   m_PrefabInstance: {fileID: 2715928898153818544}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &8420182471444632609 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 73ffbc06802a247cfb1b26f4ee67eba8, type: 3}
-  m_PrefabInstance: {fileID: 2715928898153818544}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8849740525954060488 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6872619405049854328, guid: 73ffbc06802a247cfb1b26f4ee67eba8, type: 3}
@@ -1716,6 +1711,10 @@ PrefabInstance:
     - target: {fileID: 3715670904640368165, guid: 2722652513b897d4d92f819067e7fcb4, type: 3}
       propertyPath: m_VersionIndex
       value: 953
+      objectReference: {fileID: 0}
+    - target: {fileID: 3847951830128664785, guid: 2722652513b897d4d92f819067e7fcb4, type: 3}
+      propertyPath: m_Intensity
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4458107354577450478, guid: 2722652513b897d4d92f819067e7fcb4, type: 3}
       propertyPath: m_VersionIndex
@@ -1889,7 +1888,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2653991230366033241, guid: c9a34327278a67a449c5f26e45c54ce2, type: 3}
       propertyPath: m_fontSize
-      value: 72
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 3190728666281814087, guid: c9a34327278a67a449c5f26e45c54ce2, type: 3}
       propertyPath: m_Name
@@ -1901,7 +1900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6390362412563413696, guid: c9a34327278a67a449c5f26e45c54ce2, type: 3}
       propertyPath: m_fontSize
-      value: 72
+      value: 32.35
       objectReference: {fileID: 0}
     - target: {fileID: 6882286523267050015, guid: c9a34327278a67a449c5f26e45c54ce2, type: 3}
       propertyPath: m_Name

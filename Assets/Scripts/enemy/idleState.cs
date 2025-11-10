@@ -14,7 +14,7 @@ public class IdleState : NetworkBehaviour, States
     {
         timer = 0f;
 
-        SeachPlayer._onPlayerDetected += () => {
+        SearchPlayer._onPlayerDetected += () => {
             StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.chase);
         };
     }

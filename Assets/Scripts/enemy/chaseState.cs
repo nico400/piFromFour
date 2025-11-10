@@ -1,15 +1,22 @@
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ChaseState : NetworkBehaviour, States
 {
-    [SerializeField] private SeachPlayer seachPlayer;
+    [SerializeField] private SearchPlayer seachPlayer;
     [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private float minDistance = 1.75f;
+
     public void enterState()
     {
-        seachPlayer = GetComponent<SeachPlayer>();
-        agent = GetComponent<NavMeshAgent>();
+        seachPlayer ??= GetComponent<SearchPlayer>();
+        agent ??= GetComponent<NavMeshAgent>();
+
+        if (agent == null)
+            Debug.LogWarning($"{name} não tem NavMeshAgent!");
+        if (seachPlayer == null)
+            Debug.LogWarning($"{name} não tem SearchPlayer!");
     }
 
     public void exitState()
@@ -19,24 +26,38 @@ public class ChaseState : NetworkBehaviour, States
 
     public void updateState()
     {
-        if (seachPlayer.playerFound)
-            agent.SetDestination(seachPlayer.playerTransform.position);
+        if (!isServer)
+            return;
 
-        //muda de estado para outro
+        if (seachPlayer == null || agent == null)
+            return;
 
-        float minDistance = 1.75f;
-        if (agent.remainingDistance < minDistance)
+        // Se o inimigo perdeu o jogador, volta a patrulhar
+        if (!seachPlayer.PlayerFound || seachPlayer.PlayerTransform == null)
         {
-            // reached destination
-            if (!seachPlayer.playerInView)
-            {
-                StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.patrol);
-            }
-            /*else
+            StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.patrol);
+            return;
+        }
+
+        // Persegue o jogador
+        agent.SetDestination(seachPlayer.PlayerTransform.position);
+
+        // Quando chega perto o suficiente
+        if (!agent.pathPending && agent.remainingDistance <= minDistance)
+        {
+            var sst = seachPlayer.PlayerTransform.GetComponent<SimpleStatePlayer>();
+
+            // 🔹 CORREÇÃO: Agora ataca somente se o jogador estiver visível E em pé
+            if (seachPlayer.PlayerInView && sst != null && sst.ICanStandUp)
             {
                 agent.ResetPath();
                 StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.attack);
-            }*/
+            }
+            else
+            {
+                // Caso contrário, apenas patrulha (jogador se escondeu ou saiu da vista)
+                StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.patrol);
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class ObjetiveComplete : NetworkBehaviour
 {
     [SerializeField] private UseOnTargetInteractable[] m_UsedTargets;
-    [SerializeField] private Animator animTransitionStart;
     [SerializeField] private string nameScene;
     void Update()
     {
@@ -23,7 +22,6 @@ public class ObjetiveComplete : NetworkBehaviour
     [ClientRpc]
     public void RpcPlayObjetiveComplete()
     {
-        animTransitionStart.SetBool("IsClose", true);
         StartCoroutine(WaitAndLoadScene());     
     }
     IEnumerator WaitAndLoadScene()

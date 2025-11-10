@@ -11,7 +11,7 @@ public class PatrolState : NetworkBehaviour, States
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        SeachPlayer._onPlayerDetected += () => {
+        SearchPlayer._onPlayerDetected += () => {
             StateManagerEnemy.instance.changeState(StateManagerEnemy.instance.chase);
         };
     }

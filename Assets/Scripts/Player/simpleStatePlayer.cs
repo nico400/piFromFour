@@ -19,7 +19,7 @@ public class SimpleStatePlayer : NetworkBehaviour
     [SerializeField] private float m_walkSpeed = 1.75f;
     [SerializeField] private float m_runSpeed = 3.5f;
     [SerializeField] private float m_crouchSpeed = 0.75f;
-                     private bool m_iCanStandUp = true;
+    [SyncVar]        private bool m_iCanStandUp = true;
     [SyncVar]        private bool m_isInteracting = false;
     public float m_currentSpeed { get; private set; }
     public bool ICanStandUp
@@ -117,7 +117,6 @@ public class SimpleStatePlayer : NetworkBehaviour
         else if (m_iCanStandUp && !m_isInteracting)
             m_movementState = MovementState.Idle;
     }
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 public class ScareState : NetworkBehaviour, States
 {
-    [SerializeField] private SeachPlayer seachPlayer;
+    [SerializeField] private SearchPlayer seachPlayer;
     [SerializeField] private NavMeshAgent agent;
 
     public void enterState()
@@ -21,9 +21,9 @@ public class ScareState : NetworkBehaviour, States
     public void updateState()
     {     
 
-        if (seachPlayer.playerTransform != null)
+        if (seachPlayer.PlayerTransform != null)
         {
-            Vector3 direction = (seachPlayer.playerTransform.position - transform.position).normalized;
+            Vector3 direction = (seachPlayer.PlayerTransform.position - transform.position).normalized;
             direction.y = 0;
 
             if (direction.magnitude > 0.01f)
@@ -33,7 +33,7 @@ public class ScareState : NetworkBehaviour, States
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * speed);
             }
 
-            if (seachPlayer.playerFound)
+            if (seachPlayer.PlayerFound)
                 agent.SetDestination(direction);
         }else
         {

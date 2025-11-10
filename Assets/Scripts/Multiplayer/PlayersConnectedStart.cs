@@ -8,7 +8,6 @@ public class PlayersConnectedStart : NetworkBehaviour
 {
 
     [SerializeField] private PlayerConnected playerConnected;
-    [SerializeField] private Animator animTransitionStart;
 
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private float durationFade;
@@ -31,10 +30,8 @@ public class PlayersConnectedStart : NetworkBehaviour
     IEnumerator WaitPlayerClientSpawn()
     {
         StartCoroutine(FadeIn());
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(6f);
         StartCoroutine(FadeOut());
-        yield return new WaitForSeconds(1.75f);
-        animTransitionStart.SetBool("IsClose", false);
     }
     private IEnumerator FadeIn()
     {
