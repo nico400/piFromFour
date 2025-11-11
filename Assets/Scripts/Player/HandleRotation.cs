@@ -10,7 +10,6 @@ public class HandleRotation : NetworkBehaviour
     {
         if (!isLocalPlayer) { return; }
 
-        float orientationY = cameraOrientation.rotationX;
-        transform.rotation = Quaternion.Euler(0, orientationY, 0);
+        //transform.rotation = Quaternion.Euler(0, cameraOrientation.rotationX, 0);
     }
 }

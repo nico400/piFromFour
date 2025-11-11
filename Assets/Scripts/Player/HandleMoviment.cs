@@ -6,10 +6,8 @@ public class HandleMoviment : NetworkBehaviour
     [SerializeField] private HandleInputs m_handleInputs;
     [SerializeField] private Transform m_cameraTransform;
     [SerializeField] private CharacterController m_characterController;
+    [SerializeField] private SimpleStatePlayer m_simpleStatePlayer;
 
-
-    [Header("Movement Settings")]
-    [SerializeField] private float m_speed = 5f;
 
     Vector3 moveDirection;
 
@@ -30,6 +28,16 @@ public class HandleMoviment : NetworkBehaviour
         moveDirection.y = 0; // Keep the movement on the horizontal plane
         moveDirection.Normalize(); // Normalize the direction vector to ensure consistent speed
 
-        m_characterController.Move(moveDirection * Time.deltaTime * m_speed); // Adjust speed as needed
+        m_characterController.Move(moveDirection * Time.deltaTime * m_simpleStatePlayer.m_currentSpeed); // Adjust speed as needed
+        handleGravity(); // Handle gravity application
+    }
+
+    void handleGravity()
+    {
+        if (!m_characterController.isGrounded)
+        {
+            float gravity = 9.81f; // Gravity value
+            m_characterController.Move(Vector3.down * Time.deltaTime * gravity); // Apply gravity when grounded
+        }
     }
 }
